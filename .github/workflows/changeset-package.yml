@@ -1,4 +1,4 @@
-name: Publish Package
+name: Changeset Package
 
 on:
   push:
