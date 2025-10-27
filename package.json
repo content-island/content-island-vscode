@@ -1,0 +1,109 @@
+{
+  "name": "content-island-vscode",
+  "publisher": "content-island",
+  "displayName": "Content Island",
+  "description": "Manage and edit your Content Island content directly from VSCode with seamless integration.",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/content-island/content-island-vscode.git"
+  },
+  "keywords": [
+    "content island",
+    "content island vscode",
+    "vscode extension",
+    "content management",
+    "hcms integration",
+    "content editing"
+  ],
+  "author": "Content Island",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/content-island/content-island-vscode/issues"
+  },
+  "homepage": "https://github.com/content-island/content-island-vscode#readme",
+  "main": "./dist/index.js",
+  "type": "module",
+  "imports": {
+    "#*": "./src/*"
+  },
+  "scripts": {
+    "start": "npm run build -- --watch --sourcemap",
+    "build": "vite build",
+    "changeset": "changeset",
+    "build:package": "npm run build && vsce package --out ./dist",
+    "publish:package": "changeset tag && vsce publish --packagePath ./dist/*.vsix",
+    "prepare": "husky || echo 'Husky is not installed'"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.7",
+    "@types/node": "^22.18.12",
+    "@types/vscode": "^1.105.0",
+    "@vscode/vsce": "^3.6.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12",
+    "vite-plugin-externalize-deps": "^0.10.0"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "engines": {
+    "vscode": "^1.105.0"
+  },
+  "activationEvents": [
+    "onStartupFinished",
+    "onUri",
+    "onFileSystem:contentisland"
+  ],
+  "categories": [
+    "Other"
+  ],
+  "contributes": {
+    "configuration": {
+      "title": "Content Island",
+      "properties": {
+        "contentIsland.domain": {
+          "type": "string",
+          "default": "api.contentisland.net",
+          "markdownDescription": "Domain used for Content Island API requests. Useful if you're using Content Island `On Premise`."
+        },
+        "contentIsland.loginDomain": {
+          "type": "string",
+          "default": "app.contentisland.net",
+          "markdownDescription": "Domain used for Content Island login requests. Useful if you're using Content Island `On Premise`."
+        },
+        "contentIsland.apiVersion": {
+          "type": "string",
+          "default": "1.0",
+          "markdownDescription": "Version of the [REST API](https://docs.contentisland.net/rest-api/v1/overview/)."
+        },
+        "contentIsland.secureProtocol": {
+          "type": "boolean",
+          "default": "true",
+          "markdownDescription": "Whether to use HTTPS for requests."
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "contentIsland",
+          "title": "Content Island",
+          "icon": "./resources/content-island-logo.webp"
+        }
+      ]
+    },
+    "views": {
+      "contentIsland": [
+        {
+          "id": "contentIslandExplorer",
+          "name": "Content Island",
+          "icon": "./resources/content-island-logo.svg"
+        }
+      ]
+    }
+  }
+}
