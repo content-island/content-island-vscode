@@ -1,0 +1,9 @@
+node_modules
+.angular
+.turbo
+dist
+*.ejs
+.cache
+public
+.DS_Store
+*.vsix

@@ -1,0 +1,32 @@
+name: Publish Package
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup node version
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.x
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build:package"
+
+      - name: Publish Release
+        uses: changesets/action@v1
+        with:
+          publish: npm run publish:package
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VSCE_PAT: ${{ secrets.CONTENT_ISLAND_VSCE_TOKEN }}
