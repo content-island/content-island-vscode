@@ -6,7 +6,7 @@ on:
       - develop
 
 jobs:
-  changeset-packages:
+  changeset-package:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository

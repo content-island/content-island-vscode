@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  publish-packages:
+  publish-package:
     runs-on: ubuntu-latest
     environment:
       name: Marketplace Portal
