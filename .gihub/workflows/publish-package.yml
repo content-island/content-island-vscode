@@ -8,6 +8,9 @@ on:
 jobs:
   publish-packages:
     runs-on: ubuntu-latest
+    environment:
+      name: Marketplace Portal
+      url: https://marketplace.visualstudio.com/manage
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
