@@ -1,0 +1,7 @@
+{
+  "extension.name": "Content Island",
+  "configuration.domain.description": "Domain used for Content Island API requests. Useful if you're using Content Island `On Premise`.",
+  "configuration.loginDomain.description": "Domain used for Content Island login requests. Useful if you're using Content Island `On Premise`.",
+  "configuration.apiVersion.description": "Version of the [REST API](https://docs.contentisland.net/rest-api/v1/overview/).",
+  "configuration.secureProtocol.description": "Whether to use HTTPS for requests."
+}
