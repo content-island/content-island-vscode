@@ -41,6 +41,9 @@
     "publish:package": "changeset tag && vsce publish --packagePath ./dist/*.vsix",
     "prepare": "husky || echo 'Husky is not installed'"
   },
+  "dependencies": {
+    "@content-island/vscode-api-client": "0.1.0"
+  },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",
     "@types/node": "^22.18.12",
@@ -233,8 +236,5 @@
         }
       ]
     }
-  },
-  "dependencies": {
-    "@content-island/vscode-api-client": "0.1.0"
   }
 }
