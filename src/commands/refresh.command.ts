@@ -8,7 +8,7 @@ export const refresh = (fsProvider: ContentIslandFileSystemProvider) => async ()
       cancellable: false,
     },
     async () => {
-      await fsProvider.checkContentPendingToPull();
+      await fsProvider.loadMetadata();
     }
   );
 };
