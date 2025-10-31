@@ -10,11 +10,16 @@
   },
   "keywords": [
     "content island",
-    "content island vscode",
-    "vscode extension",
     "content management",
-    "hcms integration",
-    "content editing"
+    "headless cms",
+    "vscode",
+    "vscode extension",
+    "cms",
+    "content editing",
+    "api integration",
+    "editor",
+    "productivity",
+    "content workflow"
   ],
   "author": "Content Island",
   "license": "MIT",
@@ -30,10 +35,14 @@
   "scripts": {
     "start": "npm run build -- --watch --sourcemap",
     "build": "vite build",
+    "test": "vitest -c ./config/test/config.ts",
     "changeset": "changeset",
     "build:package": "npm run build && vsce package --out ./dist",
     "publish:package": "changeset tag && vsce publish --packagePath ./dist/*.vsix",
     "prepare": "husky || echo 'Husky is not installed'"
+  },
+  "dependencies": {
+    "@content-island/vscode-api-client": "0.1.0"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",
@@ -45,7 +54,8 @@
     "prettier": "^3.6.2",
     "typescript": "^5.9.3",
     "vite": "^7.1.12",
-    "vite-plugin-externalize-deps": "^0.10.0"
+    "vite-plugin-externalize-deps": "^0.10.0",
+    "vitest": "^4.0.4"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.52.5"
@@ -59,11 +69,17 @@
   "activationEvents": [
     "onStartupFinished",
     "onUri",
-    "onFileSystem:contentisland"
+    "onFileSystem:content-island-scheme"
   ],
   "categories": [
     "Other"
   ],
+  "icon": "./assets/app-icon.webp",
+  "galleryBanner": {
+    "color": "#17191E",
+    "theme": "dark"
+  },
+  "qna": false,
   "contributes": {
     "configuration": {
       "title": "Content Island",
@@ -71,22 +87,22 @@
         "contentIsland.domain": {
           "type": "string",
           "default": "api.contentisland.net",
-          "markdownDescription": "Domain used for Content Island API requests. Useful if you're using Content Island `On Premise`."
+          "markdownDescription": "%configuration.domain.description%"
         },
         "contentIsland.loginDomain": {
           "type": "string",
           "default": "app.contentisland.net",
-          "markdownDescription": "Domain used for Content Island login requests. Useful if you're using Content Island `On Premise`."
+          "markdownDescription": "%configuration.loginDomain.description%"
         },
         "contentIsland.apiVersion": {
           "type": "string",
           "default": "1.0",
-          "markdownDescription": "Version of the [REST API](https://docs.contentisland.net/rest-api/v1/overview/)."
+          "markdownDescription": "%configuration.apiVersion.description%"
         },
         "contentIsland.secureProtocol": {
           "type": "boolean",
           "default": "true",
-          "markdownDescription": "Whether to use HTTPS for requests."
+          "markdownDescription": "%configuration.secureProtocol.description%"
         }
       }
     },
@@ -94,8 +110,8 @@
       "activitybar": [
         {
           "id": "contentIsland",
-          "title": "Content Island",
-          "icon": "./resources/content-island-logo.webp"
+          "title": "%extension.name%",
+          "icon": "./assets/explorer-icon.webp"
         }
       ]
     },
@@ -103,8 +119,120 @@
       "contentIsland": [
         {
           "id": "contentIslandExplorer",
-          "name": "Content Island",
-          "icon": "./resources/content-island-logo.svg"
+          "name": "%extension.name%",
+          "icon": "./assets/explorer-icon.svg"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "content-island-vscode.openFile",
+        "title": "%commands.openFile.title%",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "content-island-vscode.deleteFile",
+        "title": "%commands.deleteFile.title%",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "content-island-vscode.pullContent",
+        "title": "%commands.pullContent.title%",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "content-island-vscode.pushContent",
+        "title": "%commands.pushContent.title%",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "content-island-vscode.discard",
+        "title": "%commands.discard.title%",
+        "icon": "$(discard)"
+      },
+      {
+        "command": "content-island-vscode.refreshTree",
+        "title": "%commands.refresh.title%",
+        "icon": "$(refresh)"
+      }
+    ],
+    "viewsWelcome": [
+      {
+        "view": "contentIslandExplorer",
+        "contents": "%viewExplorer.content%"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "content-island-vscode.openFile",
+          "when": "never"
+        },
+        {
+          "command": "content-island-vscode.deleteFile",
+          "when": "never"
+        },
+        {
+          "command": "content-island-vscode.pullContent",
+          "when": "never"
+        },
+        {
+          "command": "content-island-vscode.pushContent",
+          "when": "never"
+        },
+        {
+          "command": "content-island-vscode.discard",
+          "when": "never"
+        },
+        {
+          "command": "content-island-vscode.refreshTree",
+          "when": "never"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "content-island-vscode.refreshTree",
+          "when": "view == contentIslandExplorer",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "content-island-vscode.openFile",
+          "when": "view == contentIslandExplorer && (viewItem == field || viewItem == field-pull)",
+          "group": "inline@1"
+        },
+        {
+          "command": "content-island-vscode.pullContent",
+          "when": "view == contentIslandExplorer && (viewItem == content || viewItem == content-pull || viewItem == field || viewItem == field-pull)",
+          "group": "inline@2"
+        },
+        {
+          "command": "content-island-vscode.pushContent",
+          "when": "view == contentIslandExplorer && (viewItem == content-push || viewItem == content-pull-push || viewItem == field-push || viewItem == field-pull-push)",
+          "group": "inline@2"
+        },
+        {
+          "command": "content-island-vscode.discard",
+          "when": "view == contentIslandExplorer && (viewItem == content-push || viewItem == content-pull-push || viewItem == field-push || viewItem == field-pull-push)",
+          "group": "inline@3"
+        },
+        {
+          "command": "content-island-vscode.deleteFile",
+          "when": "view == contentIslandExplorer && (viewItem == content || viewItem == content-pull || viewItem == content-push || viewItem == content-pull-push || viewItem == field || viewItem == field-pull || viewItem == field-push || viewItem == field-pull-push)",
+          "group": "inline@4"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "content-island-vscode.pullContent",
+          "when": "resourceScheme == content-island-scheme",
+          "group": "navigation@-100"
+        },
+        {
+          "command": "content-island-vscode.pushContent",
+          "when": "resourceScheme == content-island-scheme",
+          "group": "navigation@-99"
         }
       ]
     }
