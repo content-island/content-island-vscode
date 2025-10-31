@@ -42,7 +42,7 @@
     "prepare": "husky || echo 'Husky is not installed'"
   },
   "dependencies": {
-    "@content-island/vscode-api-client": "0.1.0"
+    "@content-island/vscode-api-client": "0.1.1"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",
