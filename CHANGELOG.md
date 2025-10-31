@@ -1,5 +1,11 @@
 # content-island-vscode
 
+## 0.1.1
+
+### Patch Changes
+
+- c95d6db: Fix load metadata on multiple instances
+
 ## 0.1.0
 
 ### Minor Changes
