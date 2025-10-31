@@ -9,15 +9,30 @@ export interface PullContentByIds {
   fieldIds?: string[];
 }
 
-export type PullContentProps = PullContentByIds | ContentIslandTreeItem;
+export type PullContentProps = PullContentByIds | ContentIslandTreeItem | vscode.Uri;
 
-const getPullContentIdsFromProps = async (props: PullContentProps): Promise<PullContentByIds> => {
-  if ('contentId' in props && 'fieldId' in props) {
+const isPullContentByIds = (props: PullContentProps): props is PullContentByIds => {
+  return 'contentId' in props && ('fieldId' in props || 'fieldIds' in props);
+};
+
+const isContentIslandTreeItem = (props: PullContentProps): props is ContentIslandTreeItem => {
+  return 'treeItem' in props;
+};
+
+const isVscodeUri = (props: PullContentProps): props is vscode.Uri => {
+  return props instanceof vscode.Uri;
+};
+
+const getPullContentIdsFromProps = async (
+  props: PullContentProps,
+  fsProvider: ContentIslandFileSystemProvider
+): Promise<PullContentByIds> => {
+  if (isPullContentByIds(props)) {
     return {
       contentId: props.contentId,
       fieldId: props.fieldId,
     };
-  } else if ('treeItem' in props) {
+  } else if (isContentIslandTreeItem(props)) {
     if (props.treeItem.type === 'field') {
       await getClient().authorizeByProjectId(props.fileMetadata.project.id);
       return {
@@ -32,6 +47,15 @@ const getPullContentIdsFromProps = async (props: PullContentProps): Promise<Pull
       return {
         contentId: props.treeItem.contentId,
         fieldIds,
+      };
+    }
+  } else if (isVscodeUri(props)) {
+    const fileMetadata = fsProvider.getFileMetadata(props);
+    if (fileMetadata) {
+      await getClient().authorizeByProjectId(fileMetadata.project.id);
+      return {
+        contentId: fileMetadata.content.id,
+        fieldId: fileMetadata.field.id,
       };
     }
   } else {
@@ -93,7 +117,7 @@ const pullMultipleFields = async (
 export const pullContent =
   (fsProvider: ContentIslandFileSystemProvider) =>
   async (props: PullContentProps): Promise<void> => {
-    const { contentId, fieldId, fieldIds } = await getPullContentIdsFromProps(props);
+    const { contentId, fieldId, fieldIds } = await getPullContentIdsFromProps(props, fsProvider);
 
     if (fieldId) {
       await vscode.window.withProgress(

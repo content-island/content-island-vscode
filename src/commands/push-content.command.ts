@@ -1,9 +1,44 @@
 import { getClient } from '#core/api.client';
 import type { ContentIslandFileSystemProvider, FileMetadata } from '#providers/file-system';
-import type { ContentIslandTreeItem } from '#providers/tree';
+import type { ContentIslandTreeItem, TreeItemType } from '#providers/tree';
 import * as vscode from 'vscode';
 
-export type PushContentProps = ContentIslandTreeItem;
+export type PushContentProps = ContentIslandTreeItem | vscode.Uri;
+
+const isContentIslandTreeItem = (props: PushContentProps): props is ContentIslandTreeItem => {
+  return 'treeItem' in props;
+};
+
+const isVscodeUri = (props: PushContentProps): props is vscode.Uri => {
+  return props instanceof vscode.Uri;
+};
+
+const getPushProps = async (
+  props: PushContentProps,
+  fsProvider: ContentIslandFileSystemProvider
+): Promise<{
+  fileMetadata: FileMetadata;
+  type: TreeItemType;
+  children?: ContentIslandTreeItem[];
+}> => {
+  if (isContentIslandTreeItem(props)) {
+    return {
+      fileMetadata: props.fileMetadata,
+      type: props.treeItem.type,
+      children: props.children,
+    };
+  } else if (isVscodeUri(props)) {
+    const fileMetadata = fsProvider.getFileMetadata(props);
+    if (fileMetadata) {
+      return {
+        fileMetadata,
+        type: 'field',
+      };
+    }
+  } else {
+    throw new Error('Invalid properties provided to push content.');
+  }
+};
 
 const pushOneField = async (fileMetadata: FileMetadata, fsProvider: ContentIslandFileSystemProvider): Promise<void> => {
   if (!fileMetadata.pendingToPush) {
@@ -34,13 +69,13 @@ const pushOneField = async (fileMetadata: FileMetadata, fsProvider: ContentIslan
 export const pushContent =
   (fsProvider: ContentIslandFileSystemProvider) =>
   async (props: PushContentProps): Promise<void> => {
-    if (props.treeItem.type === 'field') {
-      const fileMetadata = props.fileMetadata;
+    const { fileMetadata, type, children } = await getPushProps(props, fsProvider);
+    if (type === 'field') {
       await pushOneField(fileMetadata, fsProvider);
       vscode.window.showInformationMessage('Content pushed successfully.');
-    } else if (props.treeItem.type === 'content') {
+    } else if (type === 'content') {
       const fieldItems =
-        props.children?.filter(child => child.treeItem.type === 'field' && child.fileMetadata.pendingToPush) || [];
+        children?.filter(child => child.treeItem.type === 'field' && child.fileMetadata.pendingToPush) || [];
       let errors = 0;
       for (const fieldItem of fieldItems) {
         const fileMetadata = fieldItem.fileMetadata;

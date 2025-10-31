@@ -193,6 +193,18 @@
           "when": "view == contentIslandExplorer && (viewItem == content || viewItem == content-pull || viewItem == content-push || viewItem == content-pull-push || viewItem == field || viewItem == field-pull || viewItem == field-push || viewItem == field-pull-push)",
           "group": "inline@4"
         }
+      ],
+      "editor/title": [
+        {
+          "command": "content-island-vscode.pullContent",
+          "when": "resourceScheme == content-island-scheme",
+          "group": "navigation"
+        },
+        {
+          "command": "content-island-vscode.pushContent",
+          "when": "resourceScheme == content-island-scheme",
+          "group": "navigation"
+        }
       ]
     }
   },
