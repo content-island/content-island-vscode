@@ -224,12 +224,12 @@
         {
           "command": "content-island-vscode.pullContent",
           "when": "resourceScheme == content-island-scheme",
-          "group": "navigation"
+          "group": "navigation@-100"
         },
         {
           "command": "content-island-vscode.pushContent",
           "when": "resourceScheme == content-island-scheme",
-          "group": "navigation"
+          "group": "navigation@-99"
         }
       ]
     }
