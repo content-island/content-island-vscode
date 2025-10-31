@@ -21,16 +21,16 @@ export class ContentIslandFileSystemProvider implements vscode.FileSystemProvide
   constructor(context: vscode.ExtensionContext) {
     this._workspaceRoot = path.join(context.globalStorageUri.fsPath, EXTENSION_NAME);
     this._metadataFilePath = path.join(this._workspaceRoot, METADATA_JSON_FILENAME);
-    this._loadMetadata();
+    this.loadMetadata();
   }
 
-  private async _loadMetadata(): Promise<void> {
+  public async loadMetadata(): Promise<void> {
     try {
       await fs.mkdir(this._workspaceRoot, { recursive: true });
       const data = await fs.readFile(this._metadataFilePath, 'utf-8');
       const obj = JSON.parse(data);
       this._fileMetadataMap = new Map(Object.entries(obj));
-      await this.checkContentPendingToPull();
+      await this._checkContentPendingToPull();
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
         throw error;
@@ -38,7 +38,7 @@ export class ContentIslandFileSystemProvider implements vscode.FileSystemProvide
     }
   }
 
-  public async checkContentPendingToPull(): Promise<void> {
+  private async _checkContentPendingToPull(): Promise<void> {
     const apiClient = getClient();
     const groupedFileMetadata = mapToGroupedFileMetadata(Array.from(this._fileMetadataMap.values()));
 
