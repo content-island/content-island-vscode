@@ -160,6 +160,32 @@
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "content-island-vscode.openFile",
+          "when": "never"
+        },
+        {
+          "command": "content-island-vscode.deleteFile",
+          "when": "never"
+        },
+        {
+          "command": "content-island-vscode.pullContent",
+          "when": "never"
+        },
+        {
+          "command": "content-island-vscode.pushContent",
+          "when": "never"
+        },
+        {
+          "command": "content-island-vscode.discard",
+          "when": "never"
+        },
+        {
+          "command": "content-island-vscode.refreshTree",
+          "when": "never"
+        }
+      ],
       "view/title": [
         {
           "command": "content-island-vscode.refreshTree",
