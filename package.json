@@ -124,39 +124,39 @@
     "commands": [
       {
         "command": "content-island-vscode.openFile",
-        "title": "Open File",
+        "title": "%commands.openFile.title%",
         "icon": "$(go-to-file)"
       },
       {
         "command": "content-island-vscode.deleteFile",
-        "title": "Delete Local File",
+        "title": "%commands.deleteFile.title%",
         "icon": "$(trash)"
       },
       {
         "command": "content-island-vscode.pullContent",
-        "title": "Pull Content from Content Island",
+        "title": "%commands.pullContent.title%",
         "icon": "$(cloud-download)"
       },
       {
         "command": "content-island-vscode.pushContent",
-        "title": "Push Changes to Content Island",
+        "title": "%commands.pushContent.title%",
         "icon": "$(cloud-upload)"
       },
       {
         "command": "content-island-vscode.discard",
-        "title": "Discard Changes",
+        "title": "%commands.discard.title%",
         "icon": "$(discard)"
       },
       {
         "command": "content-island-vscode.refreshTree",
-        "title": "Refresh",
+        "title": "%commands.refresh.title%",
         "icon": "$(refresh)"
       }
     ],
     "viewsWelcome": [
       {
         "view": "contentIslandExplorer",
-        "contents": "No content downloaded yet.\n[Refresh view](command:content-island-vscode.refreshTree)"
+        "contents": "%viewExplorer.content%"
       }
     ],
     "menus": {
@@ -170,12 +170,12 @@
       "view/item/context": [
         {
           "command": "content-island-vscode.openFile",
-          "when": "view == contentIslandExplorer && viewItem == field",
+          "when": "view == contentIslandExplorer && (viewItem == field || viewItem == field-pull)",
           "group": "inline@1"
         },
         {
           "command": "content-island-vscode.pullContent",
-          "when": "view == contentIslandExplorer && (viewItem == content || viewItem == field)",
+          "when": "view == contentIslandExplorer && (viewItem == content || viewItem == content-pull || viewItem == field || viewItem == field-pull)",
           "group": "inline@2"
         },
         {

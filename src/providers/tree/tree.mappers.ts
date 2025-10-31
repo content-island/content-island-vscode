@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import type { FileMetadata } from '../file-system';
+import type { FileMetadata, GroupedFileMetadata } from '../file-system';
 import {
   PENDING_TO_PULL_ICON,
   PENDING_TO_PULL_TOOLTIP,
@@ -7,25 +7,6 @@ import {
   PENDING_TO_PUSH_TOOLTIP,
 } from './tree.constants';
 import * as model from './tree.model';
-
-export const mapToGroupedFileMetadata = (fileMetadataList: FileMetadata[]): model.GroupedFileMetadata => {
-  const groupedMap: model.GroupedFileMetadata = new Map();
-
-  fileMetadataList?.forEach(fileMetadata => {
-    const projectId = fileMetadata.project.id;
-    const contentId = fileMetadata.content.id;
-    if (!groupedMap.has(projectId)) {
-      groupedMap.set(projectId, {});
-    }
-    const contentMap = groupedMap.get(projectId);
-    if (!contentMap[contentId]) {
-      contentMap[contentId] = [];
-    }
-    contentMap[contentId].push(fileMetadata);
-  });
-
-  return groupedMap;
-};
 
 const getStatusIcons = (pendingToPull: boolean, pendingToPush: boolean): string => {
   const statusIcons = `${pendingToPull ? PENDING_TO_PULL_ICON : ''}${pendingToPush ? PENDING_TO_PUSH_ICON : ''}`.trim();
@@ -71,7 +52,7 @@ const mapToProjectTreeItem = (
   };
 };
 
-export const mapToProjectTreeItemList = (groupedFileMetadata: model.GroupedFileMetadata): model.ProjectTreeItem[] => {
+export const mapToProjectTreeItemList = (groupedFileMetadata: GroupedFileMetadata): model.ProjectTreeItem[] => {
   const projectTreeItems: model.ProjectTreeItem[] = [];
   groupedFileMetadata.forEach((contentMap, projectId) => {
     projectTreeItems.push(mapToProjectTreeItem(projectId, contentMap));
@@ -104,7 +85,7 @@ const mapToContentTreeItem = (
 };
 
 export const mapToContentTreeItemList = (
-  groupedFileMetadata: model.GroupedFileMetadata,
+  groupedFileMetadata: GroupedFileMetadata,
   projectId: string
 ): model.ContentTreeItem[] => {
   const contentTreeItems: model.ContentTreeItem[] = [];
@@ -135,7 +116,7 @@ const mapToFieldTreeItem = (fileMetadata: FileMetadata): model.FieldTreeItem => 
 };
 
 export const mapToFieldTreeItemList = (
-  groupedFileMetadata: model.GroupedFileMetadata,
+  groupedFileMetadata: GroupedFileMetadata,
   projectId: string,
   contentId: string
 ): model.FieldTreeItem[] => {

@@ -1,14 +1,10 @@
 import type { OpenFileProps } from '#commands';
 import { sortByString } from '#common/helpers/sort.helpers.js';
 import { COMMANDS, EXPLORER_VIEW_ID } from '#core/constants';
+import { mapToGroupedFileMetadata } from '#core/mappers';
 import * as vscode from 'vscode';
 import type { ContentIslandFileSystemProvider, FileMetadata } from '../file-system';
-import {
-  mapToContentTreeItemList,
-  mapToFieldTreeItemList,
-  mapToGroupedFileMetadata,
-  mapToProjectTreeItemList,
-} from './tree.mappers';
+import { mapToContentTreeItemList, mapToFieldTreeItemList, mapToProjectTreeItemList } from './tree.mappers';
 import * as model from './tree.model';
 
 export class ContentIslandTreeItem extends vscode.TreeItem {

@@ -1,4 +1,6 @@
+import { getClient } from '#core/api.client.js';
 import { EXTENSION_NAME, FILE_RESOURCE_SCHEME } from '#core/constants';
+import { mapToGroupedFileMetadata } from '#core/mappers';
 import { existsSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -28,12 +30,42 @@ export class ContentIslandFileSystemProvider implements vscode.FileSystemProvide
       const data = await fs.readFile(this._metadataFilePath, 'utf-8');
       const obj = JSON.parse(data);
       this._fileMetadataMap = new Map(Object.entries(obj));
-      this._metadataEventEmitter.fire();
+      await this.checkContentPendingToPull();
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
         throw error;
       }
     }
+  }
+
+  public async checkContentPendingToPull(): Promise<void> {
+    const apiClient = getClient();
+    const groupedFileMetadata = mapToGroupedFileMetadata(Array.from(this._fileMetadataMap.values()));
+
+    for (const [projectId, contentMap] of groupedFileMetadata.entries()) {
+      try {
+        await apiClient.authorizeByProjectId(projectId);
+        const contentIds = Object.keys(contentMap);
+        const newContents = await apiClient.getRawContentList({ id: { in: contentIds } });
+        const fileMetadataList = Object.values(contentMap).flat();
+
+        const updatePromises = fileMetadataList.map(async fileMetadata => {
+          const correspondingContent = newContents.find(c => c.id === fileMetadata.content.id);
+          const field = correspondingContent?.fields.find(f => f.id === fileMetadata.field.id);
+          if (field) {
+            const uri = this.getUri(fileMetadata);
+            const fieldValue = (await this.readFile(uri)).toString();
+            const pendingToPull = field.value !== fieldValue;
+            if (fileMetadata.pendingToPull !== pendingToPull) {
+              fileMetadata.pendingToPull = pendingToPull;
+              this._fileMetadataMap.set(uri.toString(), fileMetadata);
+            }
+          }
+        });
+        await Promise.all(updatePromises);
+      } catch {}
+    }
+    await this._saveMetadata();
   }
 
   private async _saveMetadata(): Promise<void> {

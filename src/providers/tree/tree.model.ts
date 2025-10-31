@@ -39,5 +39,3 @@ export interface FieldTreeItem extends BaseTreeItem {
   fileMetadata: FileMetadata;
 }
 export type TreeItem = ProjectTreeItem | ContentTreeItem | FieldTreeItem;
-
-export type GroupedFileMetadata = Map<string, { [contentId: string]: FileMetadata[] }>;

@@ -15,3 +15,5 @@ export interface FileMetadata {
   pendingToPush: boolean;
   pendingToPull: boolean;
 }
+
+export type GroupedFileMetadata = Map<string, { [contentId: string]: FileMetadata[] }>;

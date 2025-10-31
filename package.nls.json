@@ -3,5 +3,12 @@
   "configuration.domain.description": "Domain used for Content Island API requests. Useful if you're using Content Island `On Premise`.",
   "configuration.loginDomain.description": "Domain used for Content Island login requests. Useful if you're using Content Island `On Premise`.",
   "configuration.apiVersion.description": "Version of the [REST API](https://docs.contentisland.net/rest-api/v1/overview/).",
-  "configuration.secureProtocol.description": "Whether to use HTTPS for requests."
+  "configuration.secureProtocol.description": "Whether to use HTTPS for requests.",
+  "commands.openFile.title": "Open File",
+  "commands.deleteFile.title": "Delete Local File",
+  "commands.pullContent.title": "Pull Content from Content Island",
+  "commands.pushContent.title": "Push Changes to Content Island",
+  "commands.discard.title": "Discard Changes",
+  "commands.refresh.title": "Refresh",
+  "viewExplorer.content": "No content downloaded yet.\n[Refresh view](command:content-island-vscode.refreshTree)"
 }

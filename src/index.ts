@@ -1,4 +1,4 @@
-import { deleteFile, discard, openFile, pullContent, pushContent } from '#commands';
+import { deleteFile, discard, openFile, pullContent, pushContent, refresh } from '#commands';
 import { getClient } from '#core/api.client';
 import { COMMANDS } from '#core/constants';
 import { ContentIslandFileSystemProvider, onSubscribeFileProvider } from '#providers/file-system';
@@ -16,9 +16,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(treeView);
 
   const commands = [
-    vscode.commands.registerCommand(COMMANDS.REFRESH_TREE, () => {
-      treeProvider.refresh();
-    }),
+    vscode.commands.registerCommand(COMMANDS.REFRESH_TREE, refresh(fsProvider)),
     vscode.commands.registerCommand(COMMANDS.OPEN_FILE, openFile(fsProvider)),
     vscode.commands.registerCommand(COMMANDS.DELETE_FILE, deleteFile(fsProvider)),
     vscode.commands.registerCommand(COMMANDS.PULL_CONTENT, pullContent(fsProvider)),
