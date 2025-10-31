@@ -17,6 +17,9 @@ jobs:
         with:
           node-version: 22.x
 
+      - name: Install
+        run: npm ci
+
       - name: Add/Update PR with new versions
         uses: changesets/action@v1
         env:
