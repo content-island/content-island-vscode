@@ -11,19 +11,49 @@ export interface PullContentByIds {
 
 export type PullContentProps = PullContentByIds | ContentIslandTreeItem | vscode.Uri;
 
-const isPullContentByIds = (props: PullContentProps): props is PullContentByIds => {
-  return 'contentId' in props && ('fieldId' in props || 'fieldIds' in props);
+const isPullContentByIds = (props: PullContentProps): props is PullContentByIds =>
+  'contentId' in props && ('fieldId' in props || 'fieldIds' in props);
+
+const isContentIslandTreeItem = (props: PullContentProps): props is ContentIslandTreeItem => 'treeItem' in props;
+
+const isVscodeUri = (props: PullContentProps): props is vscode.Uri => props instanceof vscode.Uri;
+
+const getPropsFromTreeItem = async (props: ContentIslandTreeItem): Promise<PullContentByIds> => {
+  if (props.treeItem.type === 'field') {
+    await getClient().authorizeByProjectId(props.fileMetadata.project.id);
+    return {
+      contentId: props.fileMetadata.content.id,
+      fieldId: props.fileMetadata.field.id,
+    };
+  }
+
+  if (props.treeItem.type === 'content') {
+    await getClient().authorizeByProjectId(props.treeItem.projectId);
+    const fieldIds = props.children
+      .filter(child => child.treeItem.type === 'field')
+      .map(child => child.fileMetadata.field.id);
+    return {
+      contentId: props.treeItem.contentId,
+      fieldIds,
+    };
+  }
 };
 
-const isContentIslandTreeItem = (props: PullContentProps): props is ContentIslandTreeItem => {
-  return 'treeItem' in props;
+const getPropsFromUri = async (
+  props: vscode.Uri,
+  fsProvider: ContentIslandFileSystemProvider
+): Promise<PullContentByIds | null> => {
+  const fileMetadata = fsProvider.getFileMetadata(props);
+  if (fileMetadata) {
+    await getClient().authorizeByProjectId(fileMetadata.project.id);
+    return {
+      contentId: fileMetadata.content.id,
+      fieldId: fileMetadata.field.id,
+    };
+  }
 };
 
-const isVscodeUri = (props: PullContentProps): props is vscode.Uri => {
-  return props instanceof vscode.Uri;
-};
-
-const getPullContentIdsFromProps = async (
+const getPullProps = async (
   props: PullContentProps,
   fsProvider: ContentIslandFileSystemProvider
 ): Promise<PullContentByIds> => {
@@ -32,35 +62,17 @@ const getPullContentIdsFromProps = async (
       contentId: props.contentId,
       fieldId: props.fieldId,
     };
-  } else if (isContentIslandTreeItem(props)) {
-    if (props.treeItem.type === 'field') {
-      await getClient().authorizeByProjectId(props.fileMetadata.project.id);
-      return {
-        contentId: props.fileMetadata.content.id,
-        fieldId: props.fileMetadata.field.id,
-      };
-    } else if (props.treeItem.type === 'content') {
-      await getClient().authorizeByProjectId(props.treeItem.projectId);
-      const fieldIds = props.children
-        .filter(child => child.treeItem.type === 'field')
-        .map(child => child.fileMetadata.field.id);
-      return {
-        contentId: props.treeItem.contentId,
-        fieldIds,
-      };
-    }
-  } else if (isVscodeUri(props)) {
-    const fileMetadata = fsProvider.getFileMetadata(props);
-    if (fileMetadata) {
-      await getClient().authorizeByProjectId(fileMetadata.project.id);
-      return {
-        contentId: fileMetadata.content.id,
-        fieldId: fileMetadata.field.id,
-      };
-    }
-  } else {
-    throw new Error('Invalid properties provided to pull content.');
   }
+
+  if (isContentIslandTreeItem(props)) {
+    return getPropsFromTreeItem(props);
+  }
+
+  if (isVscodeUri(props)) {
+    return await getPropsFromUri(props, fsProvider);
+  }
+
+  throw new Error('Invalid properties provided to pull content.');
 };
 
 const pullOneField = async (
@@ -117,7 +129,7 @@ const pullMultipleFields = async (
 export const pullContent =
   (fsProvider: ContentIslandFileSystemProvider) =>
   async (props: PullContentProps): Promise<void> => {
-    const { contentId, fieldId, fieldIds } = await getPullContentIdsFromProps(props, fsProvider);
+    const { contentId, fieldId, fieldIds } = await getPullProps(props, fsProvider);
 
     if (fieldId) {
       await vscode.window.withProgress(
