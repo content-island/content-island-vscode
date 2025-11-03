@@ -3,7 +3,7 @@
   "publisher": "content-island",
   "displayName": "Content Island",
   "description": "Manage and edit your Content Island content directly from VSCode with seamless integration.",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/content-island/content-island-vscode.git"

@@ -1,5 +1,11 @@
 # content-island-vscode
 
+## 0.2.0
+
+### Minor Changes
+
+- 80dd526: Save content before push changes from editor title
+
 ## 0.1.1
 
 ### Patch Changes
