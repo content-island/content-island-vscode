@@ -1,5 +1,11 @@
 # content-island-vscode
 
+## 0.2.1
+
+### Patch Changes
+
+- a772a75: chore: update version of @content-island/vscode-api-client to 0.1.2
+
 ## 0.2.0
 
 ### Minor Changes

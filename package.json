@@ -3,7 +3,7 @@
   "publisher": "content-island",
   "displayName": "Content Island",
   "description": "Manage and edit your Content Island content directly from VSCode with seamless integration.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/content-island/content-island-vscode.git"
@@ -42,7 +42,7 @@
     "prepare": "husky || echo 'Husky is not installed'"
   },
   "dependencies": {
-    "@content-island/vscode-api-client": "0.1.1"
+    "@content-island/vscode-api-client": "0.1.2"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",
