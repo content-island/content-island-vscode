@@ -11,40 +11,27 @@ updates:
       - dependency-name: '@content-island/vscode-api-client'
     commit-message:
       prefix: 'chore(deps)'
-    labels:
-      - 'dependencies'
-      - 'critical'
 
   - package-ecosystem: 'npm'
     directory: /
     schedule:
       interval: 'weekly'
       day: 'monday'
-    target-branch: 'develop'
     ignore:
       - dependency-name: '@content-island/vscode-api-client'
     groups:
       production-dependencies:
         patterns:
           - '*'
-    commit-message:
-      prefix: 'chore(deps)'
-    labels:
-      - 'dependencies'
-
-  - package-ecosystem: 'npm'
-    directory: /
-    schedule:
-      interval: 'monthly'
-    target-branch: 'develop'
-    groups:
+        update-types:
+          - 'minor'
+          - 'patch'
       dev-dependencies:
         dependency-type: 'development'
         update-types:
           - 'minor'
           - 'patch'
     commit-message:
-      prefix: 'chore(deps-dev)'
+      prefix: 'chore(deps)'
     labels:
       - 'dependencies'
-      - 'dev-dependencies'
