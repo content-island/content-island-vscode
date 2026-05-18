@@ -59,7 +59,14 @@ const pushOneField = async (fileMetadata: FileMetadata, fsProvider: ContentIslan
     await apiClient.authorizeByProjectId(fileMetadata.project.id);
     const uri = fsProvider.getUri(fileMetadata);
     const value = (await fsProvider.readFile(uri)).toString();
-    await apiClient.updateContentFieldValue(fileMetadata.content.id, fileMetadata.field.id, value);
+    await apiClient.updateContentFieldValue(
+      fileMetadata.content.id,
+      {
+        fieldName: fileMetadata.field.name,
+        language: fileMetadata.field.language,
+      },
+      value
+    );
     await fsProvider.setFileMetadata(
       {
         ...fileMetadata,
