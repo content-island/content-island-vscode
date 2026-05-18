@@ -1,5 +1,11 @@
 # content-island-vscode
 
+## 0.2.3
+
+### Patch Changes
+
+- 6b06f8a: fix: downgrade @types/vscode to ^1.105.0 to match engines.vscode and unblock vsce packaging
+
 ## 0.2.2
 
 ### Patch Changes
